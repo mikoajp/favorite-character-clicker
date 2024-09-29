@@ -10,7 +10,7 @@
 import '../../css/app.css';
 export default {
     props: {
-        title: {
+        title: {s
             type: String,
             required: true
         },
