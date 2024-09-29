@@ -14,5 +14,9 @@
         "sass": "^1.56.1",
         "vite": "^5.4.8",
         "vue": "^3.2.37"
+    },
+    "dependencies": {
+        "@vue/cli-service": "^5.0.8",
+        "vue-router": "^4.4.5"
     }
 }

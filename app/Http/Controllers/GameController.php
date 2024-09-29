@@ -26,16 +26,20 @@ class GameController extends Controller
      */
     public function startGame(): JsonResponse
     {
-        $characters = $this->characterService->getRandomCharacters(14);
+        try {
+            $characters = $this->gameService->startNewGame();
 
-        if (empty($characters)) {
-            return response()->json(['error' => 'Not enough characters available for the game'], 404);
+            if (empty($characters)) {
+                return response()->json(['error' => 'Not enough characters available for the game'], 404);
+            }
+
+            return response()->json(['characters' => $this->transformCharacters($characters)]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
-        session(['selected_characters' => []]);
-
-        return response()->json(['characters' => $characters]);
     }
+
+
 
     /**
      * Select a character and advance to the next round.

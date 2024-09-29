@@ -13,6 +13,22 @@ class GameService
         $this->characterService = $characterService;
     }
 
+
+    /**
+     * Start a new game by getting 14 random characters and caching them.
+     *
+     * @return array
+     */
+    public function startNewGame(): array
+    {
+
+        $characters = $this->characterService->getRandomCharacters(14);
+
+        Session::put('selected_characters', []);
+
+        return $characters;
+    }
+
     /**
      * Select a character by ID and advance to the next round.
      */

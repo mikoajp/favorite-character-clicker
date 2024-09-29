@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Http;
 
 class CharacterService
 {
-    protected int $totalPages = 30;
-    protected int $limit = 5;
+    protected int $totalPages = 90;
+    protected int $limit = 10;
     protected string $cacheKeyAllCharacters = "all_characters";
 
     /**
@@ -46,8 +46,12 @@ class CharacterService
     /**
      * Get all characters and store them in cache.
      */
-    public function getAllCharacters(): array
+    public function getAllCharacters(bool $forceRefresh = false): array
     {
+        if ($forceRefresh) {
+            Cache::forget($this->cacheKeyAllCharacters);
+        }
+
         return Cache::remember($this->cacheKeyAllCharacters, 600, function () {
             $allCharacters = [];
             $page = 1;

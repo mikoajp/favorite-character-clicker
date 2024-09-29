@@ -1,7 +1,11 @@
 <template>
     <div>
-        <h2>Rozpocznij Rozgrywkę Star Wars</h2>
-        <button v-if="!gameStarted" @click="startGame">Rozpocznij Rozgrywkę</button>
+        <MainTemplate
+            :title="'Rozpocznij Rozgrywkę Star Wars'"
+            :buttonText="'Rozpocznij Rozgrywkę'"
+            :gameStarted="gameStarted"
+            @start-game="startGame"
+        />
 
         <div v-if="gameStarted">
             <h2>Runda {{ currentRound }}</h2>
@@ -30,9 +34,12 @@
 
 <script>
 import axios from 'axios';
-import '../../css/CharacterList.css';
-
+import '../../css/contest.css';
+import MainTemplate from './MainTemplate.vue';
 export default {
+    components: {
+        MainTemplate
+    },
     data() {
         return {
             characters: [],

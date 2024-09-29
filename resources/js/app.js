@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
-import CharacterList from "./components/CharacterList.vue";
+import Contest  from "./components/Contest.vue";
 
 const app = createApp({});
-app.component('character-list', CharacterList);
+app.component('character-list', Contest);
 app.mount('#app');
