@@ -1,12 +1,21 @@
 <template>
     <div class="main-template">
         <h2>{{ title }}</h2>
-        <button v-if="!gameStarted" @click="onStart">{{ buttonText }}</button>
+        <div v-if="!gameStarted">
+            <div class="character-count-selection">
+                <h3>Select Number of Characters:</h3>
+                <button @click="selectCharacterCount(10)">10 Characters</button>
+                <button @click="selectCharacterCount(20)">20 Characters</button>
+                <button @click="selectCharacterCount(30)">30 Characters</button>
+            </div>
+            <div class="start-game">
+                <button :disabled="!selectedCharacterCount" @click="startGame">{{ buttonText }}</button>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-
 import '../../css/app.css';
 export default {
     props: {
@@ -23,9 +32,19 @@ export default {
             required: true
         }
     },
+    data() {
+        return {
+            selectedCharacterCount: null,
+        };
+    },
     methods: {
-        onStart() {
-            this.$emit('start-game');
+        selectCharacterCount(characterCount) {
+            this.selectedCharacterCount = characterCount;
+        },
+        startGame() {
+            if (this.selectedCharacterCount) {
+                this.$emit('start-game', this.selectedCharacterCount);
+            }
         }
     }
 };

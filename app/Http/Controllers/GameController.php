@@ -19,15 +19,11 @@ class GameController extends Controller
     }
 
 
-    /**
-     * Start the game by preparing 14 random characters.
-     *
-     * @return JsonResponse
-     */
-    public function startGame(): JsonResponse
+    public function startGame(Request $request): JsonResponse
     {
         try {
-            $characters = $this->gameService->startNewGame();
+            $numberOfCharacters = $request->input('number_of_characters', 10);
+            $characters = $this->gameService->startNewGame($numberOfCharacters);
 
             if (empty($characters)) {
                 return response()->json(['error' => 'Not enough characters available for the game'], 404);
@@ -44,17 +40,16 @@ class GameController extends Controller
     /**
      * Select a character and advance to the next round.
      */
-    public function selectCharacterAndAdvanceRound(Request $request): JsonResponse
+    public function selectCharacterAndAdvanceRound(): JsonResponse
     {
         try {
-            $selectedCharacterId = $request->input('character_id');
-            $nextRoundCharacters = $this->gameService->selectCharacterAndAdvanceRound($selectedCharacterId);
+            $nextRoundCharacters = $this->gameService->selectCharacterAndAdvanceRound();
 
             return response()->json([
                 'characters' => $this->transformCharacters($nextRoundCharacters),
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: 400);
         }
     }
 

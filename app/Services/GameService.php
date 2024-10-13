@@ -14,33 +14,30 @@ class GameService
     }
 
 
-    /**
-     * Start a new game by getting 14 random characters and caching them.
-     *
-     * @return array
-     */
-    public function startNewGame(): array
+    public function startNewGame(int $numberOfCharacters): array
     {
 
-        $characters = $this->characterService->getRandomCharacters(14);
+        $characters = $this->characterService->getAllCharacters();
+        $randomCharacters = collect($characters)->random($numberOfCharacters)->all();
 
-        Session::put('selected_characters', []);
+        Session::put('selected_characters', $randomCharacters);
 
-        return $characters;
+        return $randomCharacters;
     }
 
     /**
      * Select a character by ID and advance to the next round.
      */
-    public function selectCharacterAndAdvanceRound(string $characterId): array
+    public function selectCharacterAndAdvanceRound(): array
     {
-        $selectedCharacter = $this->characterService->getCharacterById($characterId);
-        $previouslySelectedCharacters = $this->updateSelectedCharactersInSession($selectedCharacter);
+        $characters = Session::get('selected_characters', []);
 
-        $excludeIds = collect($previouslySelectedCharacters)->pluck('_id')->all();
-        $additionalCharacters = $this->characterService->getAdditionalCharactersForNextRound($excludeIds, 1);
+        if (empty($characters)) {
+            return [];
+        }
 
-        return array_merge([$selectedCharacter], $additionalCharacters);
+        $selectedCharacter = collect($characters)->random();
+        return $this->updateSelectedCharactersInSession($selectedCharacter);
     }
 
     /**

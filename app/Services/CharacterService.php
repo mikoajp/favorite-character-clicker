@@ -70,23 +70,6 @@ class CharacterService
     }
 
     /**
-     * Get additional characters for the next round, excluding given IDs.
-     */
-    public function getAdditionalCharactersForNextRound(array $excludeIds, int $count): array
-    {
-        return $this->getRandomCharacters($count, $excludeIds);
-    }
-
-    /**
-     * Get a character by its ID.
-     */
-    public function getCharacterById(string $characterId): ?array
-    {
-        $allCharacters = $this->getAllCharacters();
-        return collect($allCharacters)->firstWhere('_id', $characterId);
-    }
-
-    /**
      * Get filtered characters excluding specific IDs.
      */
     protected function getFilteredCharacters(array $excludeIds = []): array
