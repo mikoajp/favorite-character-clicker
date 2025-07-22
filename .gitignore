@@ -1,3 +1,4 @@
+# Laravel specific
 /.phpunit.cache
 /node_modules
 /public/build
@@ -8,6 +9,8 @@
 .env
 .env.backup
 .env.production
+.env.local
+.env.testing
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -19,3 +22,114 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+
+# Logs
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+*.log
+
+# Database
+/database/database.sqlite
+/database/*.sqlite
+/database/*.db
+
+# Temporary files created during development
+/tmp_rovodev_*
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE and Editor files
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Build artifacts
+/public/mix-manifest.json
+/public/js/
+/public/css/
+
+# Testing
+/coverage/
+/.nyc_output
+
+# Deployment
+/deploy.php
+/.deployer/
+
+# Documentation temp files
+/docs/build/
+*.md.backup
+
+# Cache files
+.cache/
+*.cache
+
+# Environment specific
+.env.*.php
+.env.php
+
+# Laravel specific cache and temp
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitkeep
+/storage/app/*
+!/storage/app/.gitkeep
+!/storage/app/public/
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Security files
+*.pem
+*.key
+*.crt
+*.p12
+
+# Local development
+.vagrant/
+docker-compose.override.yml
+.docker/
+
+# PHP specific
+*.php~
+*.php.bak
+
+# Project specific
+/CHARACTER_SELECTION_FIX.md
+/SESSION_FIX.md
+/TIMEOUT_FIX.md
+/QUICK_SESSION_FIX.md
+/UPGRADE_NOTES.md
+/POSITION_FIX.md
+/VITE_FIX.md

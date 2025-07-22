@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -43,5 +44,36 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function games(): HasMany
+    {
+        return $this->hasMany(Game::class);
+    }
+
+    public function favoriteCharacters(): HasMany
+    {
+        return $this->hasMany(FavoriteCharacter::class);
+    }
+
+    public function characterRatings(): HasMany
+    {
+        return $this->hasMany(CharacterRating::class);
+    }
+
+    public function getCompletedGamesCount(): int
+    {
+        return $this->games()->where('status', 'completed')->count();
+    }
+
+    public function getTotalScore(): int
+    {
+        return $this->games()->where('status', 'completed')->sum('score');
+    }
+
+    public function getAverageScore(): float
+    {
+        $completedGames = $this->games()->where('status', 'completed');
+        return $completedGames->count() > 0 ? $completedGames->avg('score') : 0;
     }
 }

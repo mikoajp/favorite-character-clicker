@@ -1,20 +1,307 @@
+/* Modern Star Wars Theme */
+:root {
+    --primary-color: #FFE81F;
+    --secondary-color: #000000;
+    --accent-color: #FF6B35;
+    --dark-bg: #0D1117;
+    --card-bg: #161B22;
+    --text-light: #F0F6FC;
+    --text-muted: #8B949E;
+    --border-color: #30363D;
+    --success-color: #238636;
+    --danger-color: #DA3633;
+    --gradient-primary: linear-gradient(135deg, #FFE81F 0%, #FF6B35 100%);
+    --gradient-dark: linear-gradient(135deg, #0D1117 0%, #161B22 100%);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--dark-bg);
+    color: var(--text-light);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
 .main-template {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: var(--gradient-dark);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #ff9800;
-    color: white;
+/* Modern Button Styles */
+button, .btn {
+    padding: 12px 24px;
+    background: var(--gradient-primary);
+    color: var(--secondary-color);
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 14px 0 rgba(255, 232, 31, 0.3);
 }
 
-button:hover {
-    background-color: #e68900;
-    transform: scale(1.05);
+button:hover, .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px 0 rgba(255, 232, 31, 0.4);
+}
+
+button:active, .btn:active {
+    transform: translateY(0);
+}
+
+button:disabled, .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background: transparent;
+    color: var(--text-light);
+    border: 2px solid var(--border-color);
+    box-shadow: none;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: 0 4px 14px 0 rgba(255, 232, 31, 0.2);
+}
+
+/* Danger Button */
+.btn-danger {
+    background: var(--danger-color);
+    box-shadow: 0 4px 14px 0 rgba(218, 54, 51, 0.3);
+}
+
+.btn-danger:hover {
+    box-shadow: 0 8px 25px 0 rgba(218, 54, 51, 0.4);
+}
+
+/* Modern Header Styles */
+.modern-header {
+    background: var(--gradient-dark);
+    border-bottom: 1px solid var(--border-color);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stars" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23FFE81F" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23stars)"/></svg>');
+    opacity: 0.1;
+    animation: starfield 20s linear infinite;
+}
+
+@keyframes starfield {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.logo-section {
+    flex: 1;
+}
+
+.main-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.title-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 10px rgba(255, 232, 31, 0.5));
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin: 0;
+    font-weight: 400;
+}
+
+.tech-badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.tech-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+    transition: all 0.3s ease;
+}
+
+.tech-badge.php {
+    background: rgba(119, 123, 180, 0.1);
+    border-color: #777bb4;
+    color: #777bb4;
+}
+
+.tech-badge.laravel {
+    background: rgba(255, 45, 32, 0.1);
+    border-color: #ff2d20;
+    color: #ff2d20;
+}
+
+.tech-badge.vue {
+    background: rgba(65, 184, 131, 0.1);
+    border-color: #41b883;
+    color: #41b883;
+}
+
+.tech-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header-decoration {
+    margin-top: 2rem;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+    opacity: 0.8;
+}
+
+/* Welcome Message Styles */
+.welcome-message {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.welcome-message h4 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.welcome-message p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.welcome-message hr {
+    border: none;
+    height: 1px;
+    background: var(--border-color);
+    margin: 1.5rem 0;
+}
+
+/* Footer Styles */
+.modern-footer {
+    background: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-content p {
+    margin: 0;
+    color: var(--text-light);
+}
+
+.footer-content small {
+    color: var(--text-muted);
+}
+
+.footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+    .header-main {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+        justify-content: center;
+    }
+    
+    .tech-badges {
+        justify-content: center;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
 }

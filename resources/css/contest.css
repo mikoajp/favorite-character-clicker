@@ -1,127 +1,463 @@
-h2 {
-    margin-bottom: 20px;
+/* Modern Contest Styles */
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.game-info {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
     text-align: center;
-    font-size: 28px;
-    color: #333;
+    box-shadow: var(--shadow-lg);
+}
+
+.game-info h2 {
+    margin: 0 0 1rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.game-info p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+}
+
+.abandon-btn {
+    background: var(--danger-color) !important;
+    margin-top: 1rem;
+}
+
+/* Character Selection */
+.vs-container {
+    margin: 2rem 0;
+}
+
+.vs-container h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text-light);
 }
 
 .character-list {
-    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    list-style: none;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 40px; /* Increased gap for better visual distinction between cards */
+    margin: 0;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-li {
-    margin: 15px;
-    text-align: center;
-    padding: 20px;
-    border-radius: 15px;
-    background-color: #f9f9f9;
-    width: 600px; /* Increased width for a larger card appearance */
-    max-width: 95%; /* Ensure it adapts on smaller screens */
+.character-list.single-character {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+}
+
+.character-list.two-characters {
+    grid-template-columns: 1fr 1fr;
+    max-width: 800px;
+    gap: 4rem;
+}
+
+.character-list.multiple-characters {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    max-width: 1200px;
+    gap: 2rem;
+}
+
+.character-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
 }
 
-li:hover {
-    transform: translateY(-15px); /* Stronger lift effect on hover */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+.character-card[data-position="0"] {
+    order: 1;
+    grid-column: 1;
+}
+
+.character-card[data-position="1"] {
+    order: 2;
+    grid-column: 2;
+}
+
+/* Force specific positioning */
+.character-list.two-characters .character-card:first-child {
+    grid-column: 1;
+}
+
+.character-list.two-characters .character-card:last-child {
+    grid-column: 2;
+}
+
+
+.character-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-xl);
+}
+
+.character-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.character-card:hover::before {
+    opacity: 1;
 }
 
 .character-name {
-    margin-bottom: 15px;
-    font-size: 22px;
-    font-weight: bold;
-    color: #333;
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+    text-align: center;
 }
 
 .image-container {
     position: relative;
-    width: 100%; /* Takes full width of the container */
-    height: 500px; /* Increased height for larger images */
-    margin: 0 auto; /* Center the image inside the container */
-    overflow: hidden; /* Ensure contents do not exceed container limits */
-    transition: transform 0.5s ease-in-out; /* Smooth scaling effect */
-    border-radius: 15px;
-}
-
-.image-container:hover {
-    transform: scale(1.2); /* Stronger scaling effect when hovering */
+    margin: 1rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 3/4;
 }
 
 .character-image {
-    width: 100%; /* Image occupies full container width */
-    height: 100%; /* Image occupies full container height */
-    object-fit: cover; /* Maintain image aspect ratio while covering container */
-    border-radius: 15px;
-    display: block;
-    transition: transform 0.5s ease-in-out; /* Ensure the image itself also scales smoothly */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
-.image-container:hover .character-image {
-    transform: scale(1.15); /* Stronger zoom-in effect for the image itself */
+.character-card:hover .character-image {
+    transform: scale(1.05);
 }
 
 .favorite-overlay {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 1rem;
     opacity: 0;
     transition: opacity 0.3s ease;
-    border-radius: 15px;
 }
 
-.image-container:hover .favorite-overlay {
-    opacity: 1; /* Show overlay when user hovers over the image */
+.character-card:hover .favorite-overlay {
+    opacity: 1;
 }
 
-button {
-    padding: 12px 24px;
-    background-color: #ff9800;
-    color: white;
-    border: none;
-    border-radius: 8px;
+.select-btn {
+    background: var(--gradient-primary) !important;
+    color: var(--secondary-color) !important;
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+}
+
+.favorite-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: var(--text-light) !important;
+    padding: 12px !important;
+    border-radius: 50% !important;
+    width: 48px !important;
+    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+}
+
+.favorite-btn.favorited {
+    background: var(--danger-color) !important;
+}
+
+/* Rating System */
+.rating-display {
+    text-align: center;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(255, 232, 31, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 232, 31, 0.2);
+}
+
+.stars {
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.star {
+    color: #666;
+    font-size: 1.2rem;
+    transition: color 0.2s ease;
+}
+
+.star.filled {
+    color: var(--primary-color);
+}
+
+.star.clickable {
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-button:hover {
-    background-color: #e68900;
-    transform: scale(1.1); /* Stronger enlargement on hover */
+.star.clickable:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
 }
 
+.rating-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.rating-section {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.user-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Game Completed */
+.game-completed {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--card-bg);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-xl);
+    margin: 2rem 0;
+}
+
+.game-completed h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.winner-section {
+    margin: 2rem 0;
+}
+
+.winner-card {
+    display: inline-block;
+    background: var(--gradient-dark);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid var(--primary-color);
+    box-shadow: var(--shadow-xl);
+    max-width: 300px;
+}
+
+.winner-image {
+    width: 200px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.winner-card h4 {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: var(--text-light);
+}
+
+.final-score {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.game-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: var(--shadow-xl);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.close-btn {
+    background: var(--border-color) !important;
+    color: var(--text-light) !important;
+    margin-top: 1rem;
+}
+
+/* Character Count Selection */
+.character-count-selection {
+    margin: 2rem 0;
+}
+
+.character-count-selection h3 {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.character-count-selection button {
+    margin: 0.5rem;
+    min-width: 150px;
+}
+
+.start-game {
+    margin-top: 2rem;
+}
+
+/* VS Indicator for two characters */
+.character-list.two-characters::before {
+    content: 'VS';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    background: var(--dark-bg);
+    padding: 1rem;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+    z-index: 10;
+    box-shadow: var(--shadow-xl);
+    animation: pulse 2s infinite;
+}
+
+.vs-container {
+    position: relative;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    li {
-        width: 90%; /* Make cards occupy most of the screen width on smaller devices */
+    .character-list,
+    .character-list.two-characters,
+    .character-list.multiple-characters {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        max-width: 100%;
     }
-    .character-list {
-        gap: 20px; /* Reduce gap for smaller screens to save space */
+    
+    .character-list.two-characters::before {
+        position: static;
+        transform: none;
+        margin: 1rem 0;
+        display: block;
+        text-align: center;
     }
-    h2 {
-        font-size: 24px; /* Slightly reduce the size of heading for smaller screens */
+    
+    .game-container {
+        padding: 1rem;
+    }
+    
+    .game-info {
+        padding: 1.5rem;
+    }
+    
+    .character-card {
+        padding: 1rem;
+    }
+    
+    .game-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .game-actions button {
+        width: 100%;
+        max-width: 300px;
     }
 }
 
-@media (max-width: 480px) {
-    .character-name {
-        font-size: 18px; /* Adjust character name font size for small screens */
-    }
-    .image-container {
-        height: 350px; /* Adjusted image height for very small screens */
-    }
-    button {
-        padding: 10px 20px; /* Make buttons slightly smaller on very small screens */
-    }
+/* Loading Animation */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.loading {
+    animation: pulse 2s infinite;
+}
+
+/* Hover Effects */
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 232, 31, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(255, 232, 31, 0.6); }
+}
+
+.character-card:hover {
+    animation: glow 2s infinite;
 }
