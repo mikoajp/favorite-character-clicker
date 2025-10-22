@@ -104,6 +104,12 @@ export default {
     components: {
         MainTemplate
     },
+    props: {
+        characters: {
+            type: Array,
+            default: () => []
+        }
+    },
     data() {
         return {
             currentCharacters: [],
@@ -156,7 +162,7 @@ export default {
                     if (response.data.characters && Array.isArray(response.data.characters)) {
                         this.currentCharacters = response.data.characters;
                         this.currentRound = response.data.round;
-                        this.totalCharacters = response.data.total_characters;
+                        this.totalCharacters = response.data.remaining_characters || response.data.total_characters;
                         this.hoverStates = Array(this.currentCharacters.length).fill(false);
                         this.gameStarted = true;
                         this.gameCompleted = false;
@@ -205,7 +211,7 @@ export default {
                         // Continue to next round
                         this.currentCharacters = response.data.characters;
                         this.currentRound = response.data.round;
-                        this.totalCharacters = response.data.total_characters;
+                        this.totalCharacters = response.data.remaining_characters || response.data.total_characters;
                         this.hoverStates = Array(this.currentCharacters.length).fill(false);
                     } else {
                         console.error('Unexpected response format:', response.data);
@@ -246,17 +252,19 @@ export default {
                 return;
             }
 
-            const action = character.is_favorited ? 'delete' : 'post';
-            const url = '/api/favorites';
-            const data = character.is_favorited 
-                ? { character_id: character._id }
-                : {
+            if (character.is_favorited) {
+                // Use proper axios.delete syntax with data payload
+                axios.delete('/api/favorites', {
+                    data: { character_id: character._id }
+                })
+            } else {
+                // Add to favorites
+                axios.post('/api/favorites', {
                     character_id: character._id,
                     character_name: character.name,
                     character_image: character.image
-                };
-
-            axios[action](url, data)
+                })
+            }
                 .then(() => {
                     character.is_favorited = !character.is_favorited;
                 })

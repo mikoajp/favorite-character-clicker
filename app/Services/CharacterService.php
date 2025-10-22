@@ -170,4 +170,12 @@ class CharacterService
         $startIndex = ($page - 1) * $this->limit;
         return array_slice($fallbackCharacters, $startIndex, $this->limit);
     }
+
+    /**
+     * Get the total count of available characters.
+     */
+    public function getCharacterCount(): int
+    {
+        return count($this->getAllCharacters());
+    }
 }

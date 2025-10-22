@@ -97,4 +97,51 @@ class CharacterRatingService
             ->where('character_id', $characterId)
             ->delete() > 0;
     }
+
+    /**
+     * Get batch user ratings for multiple characters to avoid N+1 queries.
+     */
+    public function getBatchUserRatings(User $user, array $characterIds): array
+    {
+        $ratings = CharacterRating::where('user_id', $user->id)
+            ->whereIn('character_id', $characterIds)
+            ->pluck('rating', 'character_id')
+            ->toArray();
+
+        $result = [];
+        foreach ($characterIds as $characterId) {
+            $result[$characterId] = $ratings[$characterId] ?? null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get batch average ratings for multiple characters to avoid N+1 queries.
+     */
+    public function getBatchAverageRatings(array $characterIds): array
+    {
+        $ratings = CharacterRating::whereIn('character_id', $characterIds)
+            ->selectRaw('character_id, AVG(rating) as average_rating, COUNT(*) as total_ratings')
+            ->groupBy('character_id')
+            ->get()
+            ->keyBy('character_id');
+
+        $result = [];
+        foreach ($characterIds as $characterId) {
+            if (isset($ratings[$characterId])) {
+                $result[$characterId] = [
+                    'average_rating' => round($ratings[$characterId]->average_rating, 2),
+                    'total_ratings' => $ratings[$characterId]->total_ratings
+                ];
+            } else {
+                $result[$characterId] = [
+                    'average_rating' => null,
+                    'total_ratings' => 0
+                ];
+            }
+        }
+
+        return $result;
+    }
 }

@@ -50,4 +50,22 @@ class FavoriteCharacterService
             ->limit($limit)
             ->get();
     }
+
+    /**
+     * Get batch favorite statuses for multiple characters to avoid N+1 queries.
+     */
+    public function getBatchFavoriteStatuses(User $user, array $characterIds): array
+    {
+        $favorites = FavoriteCharacter::where('user_id', $user->id)
+            ->whereIn('character_id', $characterIds)
+            ->pluck('character_id')
+            ->toArray();
+
+        $result = [];
+        foreach ($characterIds as $characterId) {
+            $result[$characterId] = in_array($characterId, $favorites);
+        }
+
+        return $result;
+    }
 }

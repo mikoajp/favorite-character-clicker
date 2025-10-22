@@ -22,12 +22,13 @@ class CharacterController extends Controller
 
     public function getOneRandomCharacter(): JsonResponse
     {
-        $character = $this->characterService->getRandomCharacters(1);
+        $characters = $this->characterService->getRandomCharacters(1);
 
-        if (empty($character)) {
+        if (empty($characters)) {
             return response()->json(['error' => 'No character found'], 404);
         }
 
-        return response()->json($character);
+        // Return single character object, not array
+        return response()->json($characters[0]);
     }
 }

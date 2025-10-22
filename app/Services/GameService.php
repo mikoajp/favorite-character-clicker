@@ -22,12 +22,19 @@ class GameService
     {
         // Get random characters from API
         $allCharacters = $this->characterService->getAllCharacters();
-        $randomCharacters = collect($allCharacters)->random($numberOfCharacters)->values()->all();
+        $charactersCollection = collect($allCharacters);
+        
+        // Ensure we have enough characters
+        if ($charactersCollection->count() < $numberOfCharacters) {
+            throw new \Exception('Not enough characters available. Available: ' . $charactersCollection->count() . ', Requested: ' . $numberOfCharacters);
+        }
+        
+        $randomCharacters = $charactersCollection->random($numberOfCharacters)->values()->all();
 
         // Create game record in database
         $game = Game::create([
             'user_id' => Auth::id(),
-            'session_id' => Auth::guest() ? Session::getId() : null,
+            'session_id' => Auth::check() ? null : Session::getId(),
             'total_characters' => $numberOfCharacters,
             'current_round' => 1,
             'characters' => $randomCharacters,
@@ -195,7 +202,37 @@ class GameService
     public function getCurrentGame(): ?Game
     {
         $gameId = Session::get('current_game_id');
-        return $gameId ? Game::find($gameId) : null;
+        
+        if (!$gameId) {
+            // Fallback: Try to find the most recent active game
+            $game = Game::where('status', 'active')
+                ->where(function($query) {
+                    $query->where('session_id', Session::getId())
+                          ->orWhere('user_id', Auth::id());
+                })
+                ->orderBy('created_at', 'desc')
+                ->first();
+                
+            if ($game) {
+                Session::put('current_game_id', $game->id);
+                Session::save();
+                return $game;
+            }
+            
+            return null;
+        }
+        
+        return Game::find($gameId);
+    }
+
+    public function getCurrentGameData(): ?array
+    {
+        $game = $this->getCurrentGame();
+        if (!$game || !$game->isActive()) {
+            return null;
+        }
+
+        return $this->getCurrentRoundCharacters($game);
     }
 
     public function abandonCurrentGame(): bool

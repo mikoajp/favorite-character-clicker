@@ -36,6 +36,16 @@ class GameController extends Controller
             $request->validate([
                 'number_of_characters' => 'integer|min:4|max:50'
             ]);
+            
+            // Validate against available characters
+            $availableCount = $this->characterService->getCharacterCount();
+            $requestedCount = $request->input('number_of_characters', 10);
+            
+            if ($requestedCount > $availableCount) {
+                return response()->json([
+                    'error' => "Not enough characters available. Available: {$availableCount}, Requested: {$requestedCount}"
+                ], 422);
+            }
 
             $numberOfCharacters = $request->input('number_of_characters', 10);
             $gameData = $this->gameService->startNewGame($numberOfCharacters);
@@ -47,7 +57,7 @@ class GameController extends Controller
             return response()->json([
                 'characters' => $this->transformCharacters($gameData['characters']),
                 'round' => $gameData['round'],
-                'total_characters' => $gameData['total_characters'],
+                'remaining_characters' => $gameData['total_characters'],
                 'game_completed' => $gameData['game_completed']
             ]);
         } catch (ValidationException $e) {
@@ -78,7 +88,7 @@ class GameController extends Controller
             return response()->json([
                 'characters' => $this->transformCharacters($result['characters']),
                 'round' => $result['round'],
-                'total_characters' => $result['total_characters'],
+                'remaining_characters' => $result['total_characters'],
                 'game_completed' => $result['game_completed']
             ]);
         } catch (ValidationException $e) {
@@ -97,12 +107,19 @@ class GameController extends Controller
                 return response()->json(['error' => 'No active game found'], 404);
             }
 
+            // Add fallback like selectCharacter method
+            $gameData = $this->gameService->getCurrentGameData();
+            if (!$gameData) {
+                return response()->json(['error' => 'No active game found'], 404);
+            }
+
             return response()->json([
                 'game_id' => $game->id,
                 'round' => $game->current_round,
-                'total_characters' => $game->getRemainingCharactersCount(),
+                'remaining_characters' => $game->getRemainingCharactersCount(),
                 'status' => $game->status,
-                'score' => $game->score
+                'score' => $game->score,
+                'characters' => $this->transformCharacters($gameData['characters'] ?? [])
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -158,13 +175,6 @@ class GameController extends Controller
         }
     }
 
-    /**
-     * Transform characters for the response.
-     */
-    private function transformCharacters(array $characters): array
-    {
-        return array_map([$this, 'transformCharacter'], $characters);
-    }
 
     /**
      * Transform single character for the response.
@@ -176,6 +186,11 @@ class GameController extends Controller
             'name' => $character['name'],
             'image' => $character['image'],
         ];
+
+        // Preserve position if it exists
+        if (isset($character['position'])) {
+            $transformed['position'] = $character['position'];
+        }
 
         // Add user-specific data if authenticated
         if (Auth::check()) {
@@ -191,5 +206,56 @@ class GameController extends Controller
         $transformed['total_ratings'] = $ratingData['total_ratings'];
 
         return $transformed;
+    }
+
+    /**
+     * Transform characters with batch loading to avoid N+1 queries.
+     */
+    private function transformCharacters(array $characters): array
+    {
+        if (empty($characters)) {
+            return [];
+        }
+
+        $characterIds = array_column($characters, '_id');
+        $user = Auth::user();
+        
+        // Batch load user favorites and ratings if authenticated
+        $favoriteStatuses = [];
+        $userRatings = [];
+        if ($user) {
+            $favoriteStatuses = $this->favoriteService->getBatchFavoriteStatuses($user, $characterIds);
+            $userRatings = $this->ratingService->getBatchUserRatings($user, $characterIds);
+        }
+        
+        // Batch load average ratings
+        $averageRatings = $this->ratingService->getBatchAverageRatings($characterIds);
+        
+        // Transform characters using batched data
+        return array_map(function($character) use ($favoriteStatuses, $userRatings, $averageRatings, $user) {
+            $transformed = [
+                '_id' => $character['_id'],
+                'name' => $character['name'],
+                'image' => $character['image'],
+            ];
+
+            // Preserve position if it exists
+            if (isset($character['position'])) {
+                $transformed['position'] = $character['position'];
+            }
+
+            // Add user-specific data from batch if authenticated
+            if ($user) {
+                $transformed['is_favorited'] = $favoriteStatuses[$character['_id']] ?? false;
+                $transformed['user_rating'] = $userRatings[$character['_id']] ?? null;
+            }
+
+            // Add average rating from batch
+            $ratingData = $averageRatings[$character['_id']] ?? ['average_rating' => null, 'total_ratings' => 0];
+            $transformed['average_rating'] = $ratingData['average_rating'];
+            $transformed['total_ratings'] = $ratingData['total_ratings'];
+
+            return $transformed;
+        }, $characters);
     }
 }

@@ -8,16 +8,22 @@ use Illuminate\Support\Facades\Route;
 // Character routes
 Route::get('/random-character', [CharacterController::class, 'getOneRandomCharacter']);
 
-// Game routes
-Route::post('/start-game', [GameController::class, 'startGame']);
-Route::post('/select-character', [GameController::class, 'selectCharacterAndAdvanceRound']);
-Route::get('/current-game', [GameController::class, 'getCurrentGame']);
-Route::post('/abandon-game', [GameController::class, 'abandonGame']);
-Route::get('/game-stats', [GameController::class, 'getGameStats']);
-Route::get('/leaderboard', [GameController::class, 'getLeaderboard']);
+// Game routes (using web middleware for session support)
+Route::middleware('web')->group(function () {
+    Route::post('/start-game', [GameController::class, 'startGame']);
+    Route::post('/select-character', [GameController::class, 'selectCharacterAndAdvanceRound']);
+    Route::get('/current-game', [GameController::class, 'getCurrentGame']);
+    Route::post('/abandon-game', [GameController::class, 'abandonGame']);
+    Route::get('/leaderboard', [GameController::class, 'getLeaderboard']);
+});
+
+// Stats require authentication
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/game-stats', [GameController::class, 'getGameStats']);
+});
 
 // Favorite characters routes (require authentication)
-Route::middleware('auth')->group(function () {
+Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/favorites', [FavoriteCharacterController::class, 'addToFavorites']);
     Route::delete('/favorites', [FavoriteCharacterController::class, 'removeFromFavorites']);
     Route::get('/favorites', [FavoriteCharacterController::class, 'getUserFavorites']);
@@ -28,7 +34,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/favorites/most-favorited', [FavoriteCharacterController::class, 'getMostFavorited']);
 
 // Character rating routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/ratings', [CharacterRatingController::class, 'rateCharacter']);
     Route::get('/ratings/user/{characterId}', [CharacterRatingController::class, 'getUserRating']);
     Route::get('/ratings/user', [CharacterRatingController::class, 'getUserRatings']);
