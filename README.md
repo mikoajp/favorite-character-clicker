@@ -126,6 +126,7 @@ php artisan db:seed
 # Check migration status
 php artisan migrate:status
 ```
+<img width="1835" height="957" alt="image" src="https://github.com/user-attachments/assets/30b927a0-48f0-4ae2-8405-76f37aa463b9" />
 
 ## 🎮 How to Play
 
